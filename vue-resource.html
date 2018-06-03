@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="node_modules/vue/dist/vue.js"></script>
+  <script src="node_modules/vue-resource/dist/vue-resource.js"></script>
+</head>
+<body>
+<div id="app" class="container">
+  <h1>vue-resource插件</h1>
+  <a href="javascript:;" class="btn btn-primary" v-on:click="get">get请求</a>
+  <a href="javascript:;" class="btn btn-primary" v-on:click="post">post请求</a>
+  <a href="javascript:;" class="btn btn-primary" v-on:click="jsonp">jsonp请求</a>
+  <div>get: <br>{{msg}}</div>
+  <div>post: <br>{{postData}}</div>
+  <div>post: <br>{{jsonpData}}</div>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      msg: '',
+      postData: 'post',
+      jsonpData:'jsonpData'
+    },
+    mounted:function () {
+        //global 拦截器
+      Vue.http.interceptors.push(function (req,next) {
+          console.log('request init')
+        next((res)=>{
+            console.log('response init')
+        })
+      })
+    },
+    http:{
+       root:'https://www.imooc.com' //根路径设置
+    },
+    methods: {
+      get: function () {
+        this.$http.get('package.json', {
+          params: {
+            userId: '101'
+          },
+          header: {
+            token: 'abc'
+          }
+        }).then(data => {
+          this.msg = data.data
+        })
+      },
+      post: function () {
+        this.$http.post('/article/recommenduser', {
+          userId: 123
+        }, {
+          header: {
+            token: 'abcd'
+          }
+        }).then(data=>{
+            this.postData = data.data
+        })
+      },
+      jsonp:function () {
+        this.$http.jsonp('https://www.imooc.com/article/recommenduser').then(data=>{
+            this.jsonpData=data.data
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>

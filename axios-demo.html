@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="node_modules/vue/dist/vue.js"></script>
+  <script src="node_modules/axios/dist/axios.js"></script>
+</head>
+<body>
+<div id="app" class="container">
+  <h1>vue-resource插件</h1>
+  <a href="javascript:;" class="btn btn-primary" v-on:click="get">get请求</a>
+  <a href="javascript:;" class="btn btn-primary" v-on:click="post">post请求</a>
+  <div>get: <br>{{msg}}</div>
+  <div>post: <br>{{postData}}</div>
+</div>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      msg: '',
+      postData: 'post',
+      jsonpData:'jsonpData'
+    },
+    mounted:function () {
+        //global  拦截
+       axios.interceptors.request.use((config)=>{
+           console.log('request init')
+         return config
+       })
+      axios.interceptors.response.use(res=>{
+          console.log('res init')
+        return res;
+      })
+
+
+    },
+    methods: {
+      get: function () {
+        axios.get('package.json',{
+            params:{
+                user:'qiang'
+            },
+            headers:{
+                token:'abc'
+            }
+        }).then(data=>{
+            this.msg = data.data
+          console.log(data)
+        }).catch(error=>{
+          this.msg = error
+        })
+      },
+      post: function () {
+
+      }
+    }
+  })
+</script>
+</body>
+</html>
