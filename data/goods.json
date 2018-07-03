@@ -1,0 +1,27 @@
+{
+  "status":"1",
+  "msg":"",
+  "data":[
+    {
+      "productId":"10001",
+      "name":"mi 5",
+      "price":2499,
+      "picUrl":"1.jpg"
+    },{
+      "productId":"10001",
+      "name":"mi 6",
+      "price":2499,
+      "picUrl":"2.jpg"
+    },{
+      "productId":"10001",
+      "name":"mi 7",
+      "price":2499,
+      "picUrl":"3.jpg"
+    },{
+      "productId":"10001",
+      "name":"mi 8",
+      "price":2499,
+      "picUrl":"4.jpg"
+    }
+  ]
+}

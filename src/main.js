@@ -3,8 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+// import VueLazyload from 'vue-lazyload'
+
 
 Vue.config.productionTip = false
+
+// Vue.use(VueLazyload, {
+//   loading: '/static/loading-svg/loading-balls.svg'
+// })
 
 /* eslint-disable no-new */
 new Vue({
@@ -12,5 +18,5 @@ new Vue({
   router,
   // components: { App },
   // template: '<App/>'
-  render:h=>h(App)
+  render: h => h(App)
 }).$mount('#app')
