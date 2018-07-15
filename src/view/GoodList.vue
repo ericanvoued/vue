@@ -8,7 +8,7 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
         <div class="filter-nav">
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
-          <a href="javascript:void(0)" class="price">Price
+          <a href="javascript:void(0)" class="price" @click="sortGoods()">Price
             <svg class="icon icon-arrow-short">
               <use xlink:href="#icon-arrow-short"></use>
             </svg>
@@ -33,17 +33,20 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
               <ul>
                 <li v-for="(item,index) in goodList">
                   <div class="pic">
-                    <a href="#"><img v-bind:src="'/static/'+ item.picUrl" alt=""></a>
+                    <a href="#"><img v-bind:src="'/static/'+ item.ProductImage" alt=""></a>
                   </div>
                   <div class="main">
-                    <div class="name">{{item.name}}</div>
-                    <div class="price">{{item.price}}</div>
+                    <div class="name">{{item.productName}}</div>
+                    <div class="price">{{item.salePrice}}</div>
                     <div class="btn-area">
                       <a href="javascript:;" class="btn btn--m">加入购物车</a>
                     </div>
                   </div>
                 </li>
               </ul>
+              <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
+                加载中...
+              </div>
             </div>
           </div>
         </div>
@@ -82,7 +85,10 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
           ],
         priceCheck:'all',
         filterBy:false,
-        overlayFlag:false
+        overlayFlag:false,
+        sortFlag:true,
+        page:1,
+        busy: false
       }
     },
     components:{
@@ -95,10 +101,19 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
     },
     methods:{
       getGoodList(){
-        axios.get('/nodeServer/goodlist').then(res => {
-          this.goodList = res.data.data
+          var params = {
+              page:this.page,
+              sort:this.sortFlag?1:-1
+          }
+        axios.post('/goods',params).then(res => {
+            console.log(res)
+          this.goodList.push(...res.data.result.list)
           console.log(this.goodList)
         })
+      },
+      sortGoods(){
+        this.sortFlag =!this.sortFlag;
+        this.getGoodList();
       },
       showFilterPop(){
         this.filterBy = true;
@@ -112,6 +127,15 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
           this.priceCheck = data;
         this.filterBy = false;
         this.overlayFlag = false;
+      },
+      loadMore: function() {
+        this.busy = true;
+
+        this.page ++;
+        setTimeout(() => {
+          this.getGoodList()
+          this.busy = false;
+        }, 1000);
       }
     }
   }

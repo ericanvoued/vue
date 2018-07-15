@@ -8,7 +8,7 @@ server.get('/nodeServer/goodlist',(req,res,next)=>{
   res.json(goodsData)
 })
 
-// server.use(router)
+// pri-server.use(router)
 
 server.listen(8081)
 
