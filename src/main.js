@@ -13,13 +13,11 @@ Vue.config.productionTip = false
 //   loading: '/static/loading-svg/loading-balls.svg'
 // })
 
+
 Vue.use(infiniteScroll)
 
 /* eslint-disable no-new */
 new Vue({
-  // el: '#app',
   router,
-  // components: { App },
-  // template: '<App/>'
   render: h => h(App)
 }).$mount('#app')

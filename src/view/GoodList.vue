@@ -1,5 +1,5 @@
 Eric, [Jul 2, 2018 at 9:09:46 PM]:
-<template>
+<template xmlns:v-lazy="http://www.w3.org/1999/xhtml">
   <div>
     <nav-header></nav-header>
     <nav-bread><span slot="bread">Goods</span><span slot="pan">/Goods</span></nav-bread>
@@ -8,7 +8,7 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
         <div class="filter-nav">
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
-          <a href="javascript:void(0)" class="price" @click="sortGoods()">Price
+          <a href="javascript:void(0)" class="price">Price
             <svg class="icon icon-arrow-short">
               <use xlink:href="#icon-arrow-short"></use>
             </svg>
@@ -20,42 +20,46 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
           <div class="filter stopPop" id="filter" v-bind:class="{'filterby-show':filterBy}">
             <dl class="filter-price">
               <dt>Price:</dt>
-              <dd><a href="javascript:void(0)" v-bind:class="{'cur':priceCheck=='all'}" @click="setPriceFilter('all')">All</a></dd>
-              <dd v-for="(price,index) in priceFilter">
-                <a href="javascript:void(0)" v-bind:class="{'cur':priceCheck==index}" @click="setPriceFilter(index)">{{price.startPrice}} - {{price.endPrice}}</a>
+              <dd><a href="javascript:void(0)" v-bind:class="{'cur':currentPrice==='all'}" @click="changePrice('all')">All</a>
+              </dd>
+              <dd v-for="(price,index) in priceFilter" :key="index">
+                <a href="javascript:void(0)" v-bind:class="{'cur':currentPrice===index}" @click="changePrice(index)">{{price.startPrice}}
+                  - {{price.endPrice}}</a>
               </dd>
             </dl>
           </div>
-
           <!-- search result accessories list -->
           <div class="accessory-list-wrap">
             <div class="accessory-list col-4">
               <ul>
-                <li v-for="(item,index) in goodList">
+                <li v-for="(value,i) in goodList" :key="i">
                   <div class="pic">
-                    <a href="#"><img v-bind:src="'/static/'+ item.ProductImage" alt=""></a>
+                    <a href="#"><img v-bind:src="'/static/'+value.picUrl" alt=""></a>
                   </div>
                   <div class="main">
-                    <div class="name">{{item.productName}}</div>
-                    <div class="price">{{item.salePrice}}</div>
+                    <div class="name">{{value.name}}</div>
+                    <div class="price">{{value.price}}</div>
                     <div class="btn-area">
                       <a href="javascript:;" class="btn btn--m">加入购物车</a>
                     </div>
                   </div>
                 </li>
               </ul>
-              <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
-                加载中...
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <div class="md-overlay" v-show="overlayFlag" @click="closePop()"></div>
     <nav-footer></nav-footer>
   </div>
 </template>
+<style>
+  .nav-breadcrumb {
+    text-align: left;
+  }
+</style>
 <script>
   import "../assets/css/base.css";
   import "../assets/css/product.css";
@@ -64,78 +68,60 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
   import NavBread from '@/components/Bread.vue'
   import axios from 'axios'
 
-  export default{
-    data(){
+  export default {
+    data() {
       return {
-          goodList:[],
-          priceFilter:[
-            {
-                startPrice:'0.00',
-                endPrice:'500.00'
-            },{
-              startPrice:'500.00',
-              endPrice:'1000.00'
-            },{
-              startPrice:'1000.00',
-              endPrice:'1500.00'
-            },{
-              startPrice:'1500.00',
-              endPrice:'2000.00'
-            }
-          ],
-        priceCheck:'all',
+        currentPrice: 'all',
         filterBy:false,
         overlayFlag:false,
-        sortFlag:true,
-        page:1,
-        busy: false
+        goodList: [],
+        priceFilter: [
+          {
+            startPrice: '0.00',
+            endPrice: '500.00'
+          }, {
+            startPrice: '500.00',
+            endPrice: '1000.00'
+          }, {
+            startPrice: '1000.00',
+            endPrice: '1500.00'
+          }, {
+            startPrice: '1500.00',
+            endPrice: '2000.00'
+          }, {
+            startPrice: '2000.00',
+            endPrice: '2500.00'
+          }
+        ]
       }
     },
-    components:{
+    components: {
       NavHeader,
       NavFooter,
       NavBread,
     },
-    mounted:function () {
-      this.getGoodList()
+    mounted: function () {
+      this.getGoodList();
     },
-    methods:{
-      getGoodList(){
-          var params = {
-              page:this.page,
-              sort:this.sortFlag?1:-1
-          }
-        axios.post('/goods',params).then(res => {
-            console.log(res)
-          this.goodList.push(...res.data.result.list)
-          console.log(this.goodList)
+    methods: {
+      getGoodList() {
+        axios.get('/goods/good').then(data => {
+          this.goodList = data.data.data;
+          console.log(this.goodList[0].name)
         })
       },
-      sortGoods(){
-        this.sortFlag =!this.sortFlag;
-        this.getGoodList();
+      changePrice(index) {
+        this.currentPrice = index;
+        this.filterBy = false
+        this.overlayFlag = false
       },
       showFilterPop(){
-        this.filterBy = true;
-        this.overlayFlag = true;
+        this.filterBy = true
+        this.overlayFlag = true
       },
       closePop(){
-        this.filterBy = false;
-        this.overlayFlag = false;
-      },
-      setPriceFilter(data){
-          this.priceCheck = data;
-        this.filterBy = false;
-        this.overlayFlag = false;
-      },
-      loadMore: function() {
-        this.busy = true;
-
-        this.page ++;
-        setTimeout(() => {
-          this.getGoodList()
-          this.busy = false;
-        }, 1000);
+        this.filterBy = false
+        this.overlayFlag = false
       }
     }
   }

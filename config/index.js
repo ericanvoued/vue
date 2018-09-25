@@ -14,7 +14,7 @@ module.exports = {
       '/goods':{
         'target': 'http://localhost:3000',
         changeOrigin:true,
-        // pathRewrite: {'^/nodeServer': '/nodeServer'}
+        // pathRewrite: {'/goods': '/nodeServer'}
       }
 
 
