@@ -7,14 +7,14 @@ var userSchema = new schema({
   "userName":String,
   "userPwd":String,
   "orderList":Array,
-  "cartList":[
+  "carList":[
     {
       "productId":String,
       "productName":String,
       "price":String,
       "imgUrl":String,
       "checked":String,
-      "productNum":String
+      "productNum":Number
     }
   ],
   "addressList":[

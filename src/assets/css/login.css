@@ -20,6 +20,7 @@
   justify-content: flex-start;
   align-items: center;
   margin-left: -20px;
+  height: 83px;
 }
 .navbar-brand-logo {
   /*width: 120px;*/

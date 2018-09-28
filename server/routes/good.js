@@ -77,17 +77,12 @@ router.get("/good", function (req, res, next) {
   })
 })
 
- var test = goods.find({productId:'1014'})
-  test.exec(function (err,doc) {
-    console.log(doc)
-  })
 
 router.post("/addCart", function (req, res, next) {
 
   var userId = '100077';
   var productId = req.body.productId;
 
-  console.log('1'+productId)
 
   user.findOne({'userId': userId}, function (err, userDoc) {
     if (err) {
@@ -98,16 +93,15 @@ router.post("/addCart", function (req, res, next) {
     } else {
       if (userDoc) {
         let goodsItem = '';
-        if(userDoc.carList){
+        if (userDoc.carList) {
           userDoc.carList.forEach(function (item) {
-            if(item & item.productId == productId){
+            if (item.productId == productId) {
               goodsItem = item;
-              item.productNum ++
+              item.productNum++
             }
           })
         }
-
-        if (goodsItem){
+        if (goodsItem) {
           userDoc.save(function (err2, doc2) {
             if (err) {
               res.json({
@@ -123,18 +117,29 @@ router.post("/addCart", function (req, res, next) {
             }
           })
         } else {
-          goods.find({productId: productId}, function (err, doc) {
-            console.log("2"+doc)
+          goods.find({}, function (err, doc) {
+            var currentProduct = {};
+            for (let i = 0, len = doc.length; i < len; i++) {
+              if (doc[i].productId == productId) {
+                currentProduct = doc[i];
+                break;
+              }
+            }
+
             if (err) {
               res.json({
                 status: 0,
                 msg: err.massage
               })
             } else {
-              console.log("3"+userDoc.carList)
-              doc.productNum = 1;
-              doc.checked = 1;
-              userDoc.carList.push(doc);
+              userDoc.carList.push({
+                "productId": currentProduct.productId,
+                "productName": currentProduct.productName,
+                "price": currentProduct.price,
+                "imgUrl": currentProduct.imgUrl,
+                "productNum": 1,
+                "checked": 1
+              });
               userDoc.save(function (err2, doc2) {
                 if (err) {
                   res.json({
@@ -145,16 +150,13 @@ router.post("/addCart", function (req, res, next) {
                   res.json({
                     status: 1,
                     msg: '',
-                    result: "添加成功"
+                    result: doc2
                   })
                 }
               })
             }
           })
         }
-
-
-
       } else {
         res.json({
           user: "没有i用户"

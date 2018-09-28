@@ -132,7 +132,7 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
             } else {
               this.busy = false;
             }
-          } else {
+          }else {
             this.goodList = data.data.result.list;
             this.busy = false
           }
@@ -169,7 +169,11 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
       },
       addCar(productId) {
         axios.post('/goods/addCart',{productId:productId}).then(data=>{
-          console.log(data)
+          if(data.data.status==2){
+            alert(data.data.msg)
+          }else {
+            alert(data.data.msg)
+          }
         })
       }
     }

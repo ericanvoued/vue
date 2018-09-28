@@ -3,21 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var goodRouter = require('./routes/good');
-
 var goodjson = require('../data/goods');
 
-
-
 var app = express();
-// var router = express.Router();
-// router.get('/goods/good',function (req,res,next) {
-//   res.json(goodjson);
-// })
-// app.use(router)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,6 +19,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//拦截登陆
+app.use(function (req, res, next) {
+  if(req.cookies.userId){
+    next()
+  }else {
+    if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' ||  req.path == '/goods/good'){
+      next()
+    }else {
+      res.json({
+        status:"2",
+        msg:'当前未登录',
+        result:''
+      })
+    }
+  }
+})
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -48,5 +57,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+
 
 module.exports = app;

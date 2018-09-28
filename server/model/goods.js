@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var schema = mongoose.Schema;
 
-var productShema = new schema({
+var goodsShema = new schema({
   "productId":{type:String},
   "productName":String,
   "price":Number,
@@ -11,7 +11,7 @@ var productShema = new schema({
   "checked":String,
 })
 
-module.exports = mongoose.model('goods',productShema,'goods');
+module.exports = mongoose.model('goods',goodsShema,'goods');
 
 
 
