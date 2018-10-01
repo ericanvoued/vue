@@ -122,7 +122,7 @@
           if (res.status == 1) {
             this.nickName = '';
             localStorage.removeItem('user');
-            alert('添加成功')
+            alert('退出成功')
           }
         })
       },

@@ -56,6 +56,24 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
     </div>
 
     <div class="md-overlay" v-show="overlayFlag" @click="closePop()"></div>
+    <model v-bind:mdShow = 'mdShow' v-on:close ='closeModal()'>
+      <p slot="message">
+        请先登录，否则无法加入购物车中
+      </p>
+      <p slot="btnGroup">
+        <a class="btn btn-m" @click="closeModal()">关闭</a>
+      </p>
+    </model>
+
+    <model v-bind:mdShow = 'mdShowCart' v-on:close ='closeModal()'>
+      <p slot="message">
+        加入购物车成功！
+      </p>
+      <p slot="btnGroup">
+        <a class="btn btn-m" @click="closeModal()">继续购物</a>
+        <router-link class="btn btn-m" to="/carList">查看购物车</router-link>
+      </p>
+    </model>
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -70,6 +88,7 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
   import NavHeader from '@/components/Header.vue'
   import NavFooter from '@/components/Footer.vue'
   import NavBread from '@/components/Bread.vue'
+  import Model from '@/components/Model'
   import axios from 'axios'
 
   export default {
@@ -81,6 +100,8 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
         goodList: [],
         currentPage: 1,
         busy: true,
+        mdShowCart:false,
+        mdShow:false,
         isLoading: false,
         priceLevel: 'all',
         sortFlag: true,
@@ -108,6 +129,7 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
       NavHeader,
       NavFooter,
       NavBread,
+      Model,
     },
     mounted: function () {
       this.getGoodList(false);
@@ -170,11 +192,17 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
       addCar(productId) {
         axios.post('/goods/addCart',{productId:productId}).then(data=>{
           if(data.data.status==2){
-            alert(data.data.msg)
+            // alert(data.data.msg)
+            this.mdShow = true;
           }else {
-            alert(data.data.msg)
+            this.mdShowCart = true;
+            // alert(data.data.msg)
           }
         })
+      },
+      closeModal(){
+        this.mdShow = false;
+        this.mdShowCart = false;
       }
     }
   }
