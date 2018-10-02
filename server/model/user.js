@@ -22,8 +22,8 @@ var userSchema = new schema({
       "addressId": String,
       "userName": String,
       "streetName": String,
-      "postCode": Number,
-      "tel": Number,
+      "postCode": String,
+      "tel": String,
       "isDefault": Boolean
     }
   ]

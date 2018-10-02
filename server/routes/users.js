@@ -217,5 +217,112 @@ router.post('/carList/checkAll', function (req, res, next) {
 //   })
 // })
 
+//查询用户地址接口
+router.get('/addressList', function (req, res, next) {
+  let userId = req.cookies.userId;
+  users.findOne({userId: userId}, function (err, user) {
+    if (err) {
+      res.json({
+        status: 0,
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      if (user) {
+        // user.addressList[3] = {
+        //   "addressId": 10004,
+        //   "userName": 'eric3',
+        //   "streetName": '宝安区西乡街道4',
+        //   "postCode": '000003',
+        //   "tel": '87653333',
+        //   "isDefault": false
+        // }
+        // user.save(function (err1,doc) {
+        //   console.log(err1)
+        //   console.log(doc)
+        // })
+        res.json({
+          status: 1,
+          msg: '修改成功',
+          result: user.addressList
+        })
+      }
+    }
+
+  })
+})
+//设置默认地址
+router.post("/address/setdeault", function (req, res, next) {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  // users.update({'userId': userId, "addressList.addressId": addressId}, {
+  //   "addressList.$.isDefault": true
+  // }, function (err, doc) {
+  //     console.log(doc)
+  // })
+
+  users.findOne({'userId': userId}, function (err, user) {
+    if (err) {
+      res.json({
+        status: '0',
+        msg: err.message
+      })
+    } else {
+
+      user.addressList.map(item => {
+        if (item.addressId == addressId) {
+          item.isDefault = true;
+        } else {
+          item.isDefault = false;
+        }
+      })
+      user.save(function (err1, doc) {
+        if (err1) {
+          res.json({
+            status: '0',
+            msg: err1.message
+          })
+        } else {
+          res.json({
+            status: '1',
+            msg: '设置成功',
+            result: 'success'
+          })
+        }
+      })
+    }
+  })
+})
+
+//delete address
+router.post('/address/del', function (req, res, next) {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  users.update({
+    'userId': userId
+  }, {
+    $pull:
+      {
+        'addressList':
+          {
+            'addressId': addressId
+          }
+      }
+  }, function (err, doc) {
+    if(err){
+      res.json({
+        status: '0',
+        msg: err.message
+      })
+    }else {
+      res.json({
+        status: '1',
+        msg: '删除成功',
+        result: 'success'
+      })
+    }
+  })
+})
+
 
 module.exports = router;

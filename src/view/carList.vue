@@ -126,7 +126,7 @@
                 Item total: <span class="total-price">{{totlePrice| currency("$")}}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red">Checkout</a>
+                <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount==0}" @click="checkOut()">Checkout</a>
               </div>
             </div>
           </div>
@@ -249,14 +249,14 @@
             item.productNum ++;
             item.checked = '1'
           }else {
-            item.productNum --;
-            item.checked = '1';
             if(item.productNum<=1){
               this.delCarComfirm(item.productId)
               return ;
             }else{
 
             }
+            item.productNum --;
+            item.checked = '1';
           }
         }else {
           console.log(1)
@@ -287,6 +287,13 @@
         }).then(data=>{
           console.log(data)
         })
+      },
+      checkOut(){
+        if(this.checkedCount>0){
+          this.$router.push({
+            path: '/address'
+          })
+        }
       }
     }
   }
