@@ -1,8 +1,8 @@
 var express = require('express');
-
-
 var router = express.Router();
 var users = require('./../model/user')
+
+require('./../util/util')
 
 //登陆
 router.post('/login', function (req, res, next) {
@@ -323,6 +323,75 @@ router.post('/address/del', function (req, res, next) {
     }
   })
 })
+//生成订单
+router.post('/payment',function (req, res, next) {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  let orderTotal = req.body.orderTotal;
+  let address = {};
+  let goodList = [];
+
+  users.findOne({userId:userId},function (err, doc) {
+    if(err){
+      res.json({
+        status: '0',
+        msg: err.message
+      })
+    }else {
+      doc.addressList.map(item=>{
+        if(addressId == item.addressId){
+          address = item;
+        }
+      })
+      doc.carList.filter(item=>{
+        if(item.checked=='1'){
+          goodList.push(item)
+        }
+      })
+
+      let platform = '622';
+      let r1 = Math.floor(Math.random()*10);
+      let r2 = Math.floor(Math.random()*10);
+      let sysDate = new Date().Format('yyyyMMddhhmmss');
+      let orderDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+      let orderId = platform +r1 + sysDate +r2;
+
+      let order = {
+        orderId:orderId,
+        orderTotal:orderTotal,
+        goodList:goodList,
+        address:address,
+        orderstatus:'1',
+        createDate:orderDate
+      }
+
+      doc.orderList.push(order);
+      doc.save(function (err1,doc1) {
+        if(err1){
+          res.json({
+            status:'msg: err1.message'
+          })
+        }else {
+          res.json({
+            status: '1',
+            msg: 'success',
+            result: {
+              'orderId':order.orderId,
+              'orderTotal':order.orderTotal
+            }
+          })
+        }
+
+      })
+
+    }
+  })
+
+})
+
+
+
+
 
 
 module.exports = router;

@@ -1,6 +1,6 @@
 <template>
   <div class="nav-breadcrumb-wrap">
-    <div class="container">
+    <div class="container" style="text-align: left">
       <nav class="nav-breadcrumb">
         <a href="">Home</a>
         <slot name="bread"></slot>

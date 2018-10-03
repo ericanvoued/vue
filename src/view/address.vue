@@ -73,7 +73,7 @@
             <div class="addr-list">
               <ul>
                 <li v-for="(item, index) in addressListFilter" v-bind:class="{'check':checkIndex==index}"
-                    @click="changeIndex(index)">
+                    @click="changeIndex(index,item)">
                   <dl>
                     <dt>{{item.userName}}</dt>
                     <dd class="address">{{item.streetName}}</dd>
@@ -135,7 +135,7 @@
             </div>
           </div>
           <div class="next-btn-wrap">
-            <router-link class="btn btn--m btn--red" v-bind:to="{path:'/orderComfirm',query:}">Next</router-link>
+            <router-link class="btn btn--m btn--red" v-bind:to="{path:'/orderConfirm',query:{'addressId':selectedAddress}}">Next</router-link>
           </div>
         </div>
       </div>
@@ -177,6 +177,7 @@
         checkIndex: 0,
         addressList: [],
         addressId:'',
+        selectedAddress:'',
         modalConfirm:false,
       }
     },
@@ -198,6 +199,11 @@
       getAdressList() {
         axios.get('/users/addressList').then(data => {
           this.addressList = data.data.result;
+          this.addressList.map(item=>{
+            if(item.isDefault){
+              this.selectedAddress = item.addressId;
+            }
+          })
         })
       },
       expandList() {
@@ -207,8 +213,9 @@
           this.limit = 3;
         }
       },
-      changeIndex(_index) {
+      changeIndex(_index,item) {
         this.checkIndex = _index;
+        this.selectedAddress = item.addressId;
       },
       setDfault(addressId) {
         axios.post('/users/address/setdeault',{"addressId":addressId}).then(data=>{
