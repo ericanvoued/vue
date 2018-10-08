@@ -194,9 +194,9 @@ Eric, [Jul 2, 2018 at 9:09:46 PM]:
           if(data.data.status==2){
             // alert(data.data.msg)
             this.mdShow = true;
-          }else {
+          }else if(data.data.status=='1'){
             this.mdShowCart = true;
-            // alert(data.data.msg)
+            this.$store.commit('updateCarCount',1)
           }
         })
       },

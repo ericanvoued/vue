@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 // import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
+import Vuex from 'vuex'
 
 // import currency from './util/currency'
 
@@ -16,9 +17,33 @@ Vue.config.productionTip = false
 // Vue.filter('currency',currency)
 
 Vue.use(infiniteScroll)
+Vue.use(Vuex)
+
+const store = new Vuex.Store({
+  state:{
+    nickName:'',
+    carCount:0,
+  },
+  mutations:{
+    updataUserInfo(state, nickName){
+      state.nickName = nickName;
+    },
+    updateCarCount(state, carCount){
+      state.carCount += carCount
+    },
+    clearCarCount(state){
+      state.carCount = 0
+    },
+    initCarCount(state, carCount){
+      state.carCount = carCount
+    }
+  }
+})
+
 
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

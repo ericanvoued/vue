@@ -98,7 +98,7 @@
                 </div>
                 <div class="cart-tab-5">
                   <div class="cart-item-opration">
-                    <a href="javascript:;" class="item-edit-btn" @click="delCarComfirm(item.productId)">
+                    <a href="javascript:;" class="item-edit-btn" @click="delCarComfirm(item.productId,item.productNum)">
                       <svg class="icon icon-del">
                         <use xlink:href="#icon-del"></use>
                       </svg>
@@ -183,6 +183,7 @@
         cartList:[],
         delItem:{},
         productId:'',
+        productNum:0,
         // checkAllFlag:false,
         modalConfirm:false,
       }
@@ -233,12 +234,14 @@
           if(data.data.status==1){
             this.modalConfirm = false
             this.init();
+            this.$store.commit('updateCarCount',-this.productNum)
           }
         })
       },
-      delCarComfirm(productId){
+      delCarComfirm(productId,productNum){
         this.modalConfirm = true;
         this.productId = productId;
+        this.productNum = productNum;
       },
       closeModel(){
         this.modalConfirm = false
@@ -250,7 +253,8 @@
             item.checked = '1'
           }else {
             if(item.productNum<=1){
-              this.delCarComfirm(item.productId)
+              this.productNum = 1;
+              this.delCarComfirm(item.productId,this.productNum)
               return ;
             }else{
 
@@ -259,7 +263,6 @@
             item.checked = '1';
           }
         }else {
-          console.log(1)
           item.checked = (item.checked == '1' ? '0' : '1');
         }
 
@@ -268,7 +271,13 @@
           productNum:item.productNum,
           checked:item.checked
         }).then(data=>{
-
+          let num = 0;
+          if(_edit == 'add'){
+            num = 1;
+          }else if(_edit =='minu'){
+            num = -1;
+          }
+          this.$store.commit('updateCarCount',num)
         })
       },
       // toggleCheck(item) {

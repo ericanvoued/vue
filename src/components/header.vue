@@ -24,8 +24,8 @@
           <a href="javascript:void(0)" class="navbar-link" @click="showLogin()">Login</a>/
           <a href="javascript:void(0)" class="navbar-link" @click="logout()">Logout</a>
           <div class="navbar-cart-container">
-            <span class="navbar-cart-count"></span>
-            <a class="navbar-link navbar-cart-link" href="/#/cart">
+            <span class="navbar-cart-count" v-if="carCount>0">{{carCount}}</span>
+            <a class="navbar-link navbar-cart-link" href="/#/carList">
               <svg class="navbar-cart-logo">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
               </svg>
@@ -82,11 +82,20 @@
         userPwd: '',
         errorTip: false,
         loginModel: false,
-        nickName: '',
+        // nickName: '',
+      }
+    },
+    computed:{
+      nickName(){
+        return this.$store.state.nickName;
+      },
+      carCount(){
+        return this.$store.state.carCount;
       }
     },
     mounted() {
       this.checkLogin();
+      this.getCarCount();
     },
     methods: {
       login() {
@@ -105,7 +114,9 @@
           } else {
             this.errorTip = false;
             this.loginModel = false;
-            this.nickName = res.result.userName;
+            // this.nickName = res.result.userName;
+            this.$store.commit('updataUserInfo',res.result.userName)
+            this.getCarCount();
             localStorage.user = JSON.stringify(res.result)
           }
         })
@@ -120,7 +131,8 @@
         axios.post('/users/logout').then(data => {
           let res = data.data;
           if (res.status == 1) {
-            this.nickName = '';
+            this.$store.commit('updataUserInfo','');
+            this.$store.commit('clearCarCount');
             localStorage.removeItem('user');
             alert('退出成功')
           }
@@ -129,10 +141,17 @@
       checkLogin(){
         axios.get('/users/checkLogin').then(data=>{
           if(data.data.status==1){
-            this.nickName = data.data.result;
+            // this.nickName = data.data.result;
+            this.$store.commit('updataUserInfo',data.data.result)
           }else {
             alert(data.data.msg)
           }
+        })
+      },
+      getCarCount(){
+        axios.get('/users/carCount').then(data=>{
+          console.log(data)
+          this.$store.commit('initCarCount',data.data.result)
         })
       }
     }

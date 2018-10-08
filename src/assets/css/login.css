@@ -54,15 +54,18 @@ a {
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: -9px;
-  right: -11px;
+  top: 12px;
+  right:-5px;
   width: 20px;
+  height: 20px;
+  line-height: 20px;
   border-radius: 10px;
   color: white;
   background-color: #eb767d;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
+  z-index: 100;
 }
 .navbar-cart-logo {
   width: 25px;

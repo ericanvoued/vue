@@ -149,6 +149,33 @@ router.post('/cartEdit', function (req, res, next) {
   })
 })
 
+router.get('/carCount',function (req, res, next) {
+  if(req.cookies && req.cookies.userId){
+    let userId = req.cookies.userId;
+    users.findOne({userId:userId}, function (err, doc) {
+      if(err){
+        res.json({
+          status: '0',
+          msg: err.message,
+          result: ''
+        })
+      }else {
+        let carList = doc.carList;
+        let carCount = 0;
+        carList.map(item=>{
+          carCount += parseInt(item.productNum);
+        })
+        res.json({
+          status: '1',
+          msg: 'succeed',
+          result: carCount
+        })
+      }
+    })
+  }
+})
+
+
 //全选
 router.post('/carList/checkAll', function (req, res, next) {
   let userId = req.cookies.userId;
